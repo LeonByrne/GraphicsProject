@@ -35,6 +35,8 @@ int main()
 
 	std::cout << "Hello world!" << std::endl;
 
+	GLuint programID = create_program("../shaders/vertex.glsl", "../shaders/fragment.glsl");
+
 	while(!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();

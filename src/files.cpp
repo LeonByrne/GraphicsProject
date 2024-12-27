@@ -99,11 +99,30 @@ GLuint create_program(const char *vertex_path, const char *fragment_path)
 		std::cout << log[0] << std::endl;
 	}
 
-	glDetachShader(programID, vertexShaderID);
-	glDetachShader(programID, vertexShaderID);
+	// glDetachShader(programID, vertexShaderID);
+	// glDetachShader(programID, vertexShaderID);
 
-	glDeleteShader(vertexShaderID);
-	glDeleteShader(fragmentShaderID);
+	// glDeleteShader(vertexShaderID);
+	// glDeleteShader(fragmentShaderID);
 
 	return programID;
+}
+
+bool load_model(const char *model_path, tinygltf::Model &model)
+{
+	tinygltf::TinyGLTF loader;
+	std::string err, warn;
+
+	bool success = loader.LoadASCIIFromFile(&model, &err, &warn, model_path);
+
+	if(!success)
+		std::cerr << "Failed to load model: " << model_path << std::endl;
+
+	if(!err.empty())
+		std::cerr << err << std::endl;
+
+	if(!warn.empty())
+		std::cerr << warn << std::endl;
+	
+	return success;
 }

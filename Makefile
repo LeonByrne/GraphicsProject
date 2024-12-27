@@ -1,10 +1,10 @@
 CXX := g++
-CXX_FLAGS := -Wall -Wextra
-LIB_FLAGS := -lglfw -lGL -lGLEW 
+CXX_FLAGS := -Wall -Wextra -g
+LIB_FLAGS := -lglfw -lGL -lGLEW -ltinygltf
 
 EXECUTABLE := bin/my_program
 SRC_DIR := src
-SRC_FILES := main.cpp files.cpp
+SRC_FILES := main.cpp files.cpp model.cpp
 OBJ_FILES := $(addprefix obj/, $(SRC_FILES:.cpp=.o))
 SRC_FILES := $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 

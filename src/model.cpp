@@ -84,6 +84,35 @@ int findKeyframeIndex(const std::vector<float>& times, float animationTime)
 	return times.size() - 2;
 }
 
+GLuint loadTexture(const tinygltf::Image &image)
+{
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	// Send data across
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		GL_RGBA,
+		image.width,
+		image.height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		image.image.data()
+	);
+
+	// Set texture parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return textureID;
+}
+
 
 // Functions of the class
 
@@ -194,6 +223,17 @@ void Model::bind_mesh(const tinygltf::Mesh &mesh)
 		primitives.push_back(prim);
 
 		glBindVertexArray(0);
+	}
+}
+
+void Model::bind_textures()
+{
+	for(const tinygltf::Texture &texture : model.textures)
+	{
+		const tinygltf::Image &image = model.images[texture.source];
+		GLuint textureID = loadTexture(image);
+
+		textures.push_back(textureID);
 	}
 }
 
@@ -336,6 +376,10 @@ void Model::draw_mesh(const tinygltf::Mesh &mesh)
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos.at(indexAccessor.bufferView));
 
+		// Bind textures
+		const auto &material = model.materials[mesh.primitives[i].material];
+		bind_material_textures(material);
+
 		glDrawElements(
 			primitive.mode,
 			indexAccessor.count,
@@ -345,6 +389,28 @@ void Model::draw_mesh(const tinygltf::Mesh &mesh)
 
 		glBindVertexArray(0);
 	}
+}
+
+void Model::bind_material_textures(const tinygltf::Material &material)
+{
+	if(material.pbrMetallicRoughness.baseColorTexture.index >= 0)
+	{
+		GLuint baseTextureID = textures[material.pbrMetallicRoughness.baseColorTexture.index];
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, baseTextureID);
+	}
+
+  if (material.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0) {
+    GLuint metallicRoughTexID = textures[material.pbrMetallicRoughness.metallicRoughnessTexture.index];
+    glActiveTexture(GL_TEXTURE1); 
+    glBindTexture(GL_TEXTURE_2D, metallicRoughTexID);
+  }
+
+  if (material.normalTexture.index >= 0) {
+    GLuint normalTexID = textures[material.normalTexture.index];
+    glActiveTexture(GL_TEXTURE2); 
+    glBindTexture(GL_TEXTURE_2D, normalTexID);
+  }
 }
 
 void Model::update_skinning(const std::vector<mat4> &nodeTransforms)
@@ -359,8 +425,6 @@ void Model::update_skinning(const std::vector<mat4> &nodeTransforms)
 			skin.jointMatrices[j] = nodeTransforms[jointIndex] * skin.inverseBindMatrices[j];
 		}
 	}
-
-	std::cout << nodeTransforms[0][0][0] << std::endl;
 }
 
 void Model::update_animation(const tinygltf::Animation &anim, const Animation &animation, const float time, std::vector<mat4> &nodeTransforms)
@@ -416,6 +480,7 @@ Model::Model(const std::string &filepath)
 	assert(load_model(filepath.c_str(), model));
 
 	bind_model();
+	bind_textures();
 	prepare_skinning();
 	prepare_animation();
 
@@ -433,8 +498,6 @@ Model::~Model()
 
 void Model::update(const float time)
 {
-	std::cout << time << std::endl;
-
 	std::vector<mat4> nodeTransforms(model.nodes.size(), mat4(1.0f));
 	update_animation(model.animations[0], animations[0], time, nodeTransforms);
 
@@ -461,7 +524,10 @@ void Model::render(const mat4 &vp, const vec3 &lightPos, const vec3 &lightStreng
 	// TODO move to elsewhere? Maybe where should this go for more complex models?
 	// Send joint matices
 	// std::cout << skins[0].jointMatrices.size() << std::endl;
-	glUniformMatrix4fv(jointsID, skins[0].jointMatrices.size(), GL_FALSE, &skins[0].jointMatrices[0][0][0]);
+	if(!skins.empty())
+	{
+		glUniformMatrix4fv(jointsID, skins[0].jointMatrices.size(), GL_FALSE, &skins[0].jointMatrices[0][0][0]);
+	}
 
 	// Light data
 	glUniform3fv(lightPosID, 1, &lightPos[0]);

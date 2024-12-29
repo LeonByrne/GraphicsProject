@@ -10,8 +10,14 @@ using namespace glm;
 
 #include "files.hpp"
 #include "model.hpp"
+#include "Camera.hpp"
+
+void mouse_callback(GLFWwindow *window, double xPos, double yPos);
+void process_key(GLFWwindow *window, float time);
 
 // Camera
+Camera camera(vec3(0, 100.0f, 800.0f));
+
 static glm::vec3 eye_center(0.0f, 100.0f, 800.0f);
 static glm::vec3 lookat(0.0f, 0.0f, 0.0f);
 static glm::vec3 up(0.0f, 1.0f, 0.0f);
@@ -58,6 +64,10 @@ int main()
 
 	glfwMakeContextCurrent(window);
 
+	// Set callbacks
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	if(glewInit() != GLEW_OK)
 	{
 		std::cerr << "Failed to initialize GLEW" << std::endl;
@@ -75,17 +85,25 @@ int main()
 
 	// GLuint programID = create_program("../shaders/vertex.glsl", "../shaders/fragment.glsl");
 
-	Model bot("../models/bot.gltf");
-	Model bot2("../models/bot.gltf");
+	// Model bot("../models/bot.gltf");
+	// Model bot2("../models/bot.gltf");
 
-	bot2.set_pos(vec3(100, 0, 0));
+	// bot2.set_pos(vec3(100, 0, 0));
 
-	Model bot3("../models/CesiumMan.gltf");
-	bot3.set_pos(vec3(0, 0, 100));
-	bot3.set_scale(vec3(100));
+	// Model bot3("../models/CesiumMan.gltf");
+	// bot3.set_pos(vec3(0, 0, 100));
+	// bot3.set_scale(vec3(100));
 	// model bot("../models/Box.gltf");
 
 	// model bot("../models/AnimatedTriangle.gltf");
+
+	Model binary("../models/man/CesiumMan.glb");
+	binary.set_pos(vec3(0, 0, 100));
+	binary.set_scale(vec3(100));	
+	
+	// Model camera("../models/AntiqueCamera.glb");
+	// camera.set_pos(vec3(0, 0, 100));
+	// camera.set_scale(vec3(100));
 
 	mat4 projection = perspective(
 		radians(FoV),
@@ -94,20 +112,13 @@ int main()
 		zFar
 	);
 
-	// GLuint modelLoc = glGetUniformLocation(programID, "model");
-	// GLuint viewLoc = glGetUniformLocation(programID, "view");
-	// GLuint projectionLoc = glGetUniformLocation(programID, "projection");
-
-	// glUseProgram(programID);
-
-	// glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &mat4(1.0f)[0][0]);
-	// glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-	// glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
-
 	double lastTime = glfwGetTime();
 	float time = 0.0f;			// Animation time 
 	float fTime = 0.0f;			// Time for measuring fps
 	unsigned long frames = 0;
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	do
 	{
@@ -118,21 +129,30 @@ int main()
 		float deltaTime = (float) (currentTime - lastTime);
 		lastTime = currentTime;
 
+		process_key(window, deltaTime);
+
 		if(playAnimation)
 		{
 			time += deltaTime * playbackSpeed;
-			bot.update(time);
-			bot2.update(time);
+
+			binary.update(time);
+
+			// bot.update(time);
+			// bot2.update(time);
 			// bot3.update(time);
 		}
 
-		mat4 view = lookAt(eye_center, lookat, up);
+		// mat4 view = lookAt(eye_center, lookat, up);
+		mat4 view = camera.get_view();
 		mat4 vp = projection * view;
 
 		// bot.render(modelLoc);
-		bot.render(vp, lightPosition, lightIntensity);
-		bot2.render(vp, lightPosition, lightIntensity);
-		bot3.render(vp, lightPosition, lightIntensity);
+		// bot.render(vp, lightPosition, lightIntensity);
+		// bot2.render(vp, lightPosition, lightIntensity);
+		// bot3.render(vp, lightPosition, lightIntensity);
+
+		binary.render(vp, lightPosition, lightIntensity);
+		// camera.render(vp, lightPosition, lightIntensity);
 
 		frames++;
 		fTime += deltaTime;
@@ -148,7 +168,47 @@ int main()
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
-	} while(!glfwWindowShouldClose(window));
+	} while(!(glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_ESCAPE)));
 
 	return 0;
 }
+
+void mouse_callback(GLFWwindow *window, double xPos, double yPos)
+{
+	static double lastX = xPos;
+	static double lastY = yPos;
+
+	float xOffset = xPos - lastX;
+	float yOffset = yPos - lastY;
+
+	lastX = xPos;
+	lastY = yPos;
+
+	camera.process_mouse(xOffset, yOffset);
+}
+
+void process_key(GLFWwindow *window, float time)
+{
+	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_W, time);
+	}
+
+	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_A, time);
+	}
+
+	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_S, time);
+	}
+
+	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_D, time);
+	}
+}
+
+// TODO add camera movements
+// TODO add textures

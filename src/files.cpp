@@ -63,7 +63,7 @@ GLuint create_program(const char *vertex_path, const char *fragment_path)
 	{
 		std::vector<char> log(infoLogLength + 1);
 		glGetShaderInfoLog(vertexShaderID, infoLogLength, NULL, &log[0]);
-		std::cerr << log[0] << std::endl;
+		std::cerr << &log[0] << std::endl;
 	}
 
 	// Compile fragment shader
@@ -79,7 +79,7 @@ GLuint create_program(const char *vertex_path, const char *fragment_path)
 	{
 		std::vector<char> log(infoLogLength + 1);
 		glGetShaderInfoLog(fragmentShaderID, infoLogLength, NULL, &log[0]);
-		std::cerr << log[0] << std::endl;
+		std::cerr << &log[0] << std::endl;
 	}
 
 	// Compile program
@@ -108,12 +108,44 @@ GLuint create_program(const char *vertex_path, const char *fragment_path)
 	return programID;
 }
 
+bool is_gltf(const char *path)
+{
+	if(!path)
+	{
+		return false;
+	}
+
+	int len = strlen(path);
+
+	return len >= 5 && strcmp(path + len - 5, ".gltf") == 0;
+}
+
+bool is_glb(const char *path)
+{
+	if(!path)
+	{
+		return false;
+	}
+
+	int len = strlen(path);
+
+	return len >= 4 && strcmp(path + len - 4, ".glb") == 0;
+}
+
 bool load_model(const char *model_path, tinygltf::Model &model)
 {
 	tinygltf::TinyGLTF loader;
 	std::string err, warn;
 
-	bool success = loader.LoadASCIIFromFile(&model, &err, &warn, model_path);
+	bool success = false;
+
+	if(is_gltf(model_path))
+	{
+		success = loader.LoadASCIIFromFile(&model, &err, &warn, model_path);
+	} else if(is_glb(model_path))
+	{
+		success = loader.LoadBinaryFromFile(&model, &err, &warn, model_path);
+	}
 
 	if(!success)
 		std::cerr << "Failed to load model: " << model_path << std::endl;

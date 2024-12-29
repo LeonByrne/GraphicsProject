@@ -24,6 +24,7 @@ private:
 	std::vector<Primitive> primitives;
 	std::vector<Skin> skins;
 	std::vector<Animation> animations;
+	std::vector<GLuint> textures;
 
 	// TODO use these for instancing
 	// The model can be moved about
@@ -34,12 +35,14 @@ private:
 	void bind_model();
 	void bind_nodes(const tinygltf::Node &node);
 	void bind_mesh(const tinygltf::Mesh &mesh);
+	void bind_textures();
 	void prepare_skinning();
 	void prepare_animation();
 
 	void draw_model();
 	void draw_nodes(const tinygltf::Node &node);
 	void draw_mesh(const tinygltf::Mesh &mesh);
+	void bind_material_textures(const tinygltf::Material &material);
 	void update_skinning(const std::vector<mat4> &nodeTransforms);
 	void update_animation(const tinygltf::Animation &anim, const Animation &animation, const float time, std::vector<mat4> &nodeTransforms);
 

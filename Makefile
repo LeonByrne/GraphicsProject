@@ -4,7 +4,7 @@ LIB_FLAGS := -lglfw -lGL -lGLEW -ltinygltf
 
 EXECUTABLE := bin/my_program
 SRC_DIR := src
-SRC_FILES := main.cpp files.cpp model.cpp Camera.cpp
+SRC_FILES := main.cpp files.cpp model.cpp Camera.cpp Building.cpp Block.cpp
 OBJ_FILES := $(addprefix obj/, $(SRC_FILES:.cpp=.o))
 SRC_FILES := $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 

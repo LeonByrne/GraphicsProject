@@ -47,7 +47,22 @@ void Camera::process_key(int key, float time)
 		pos += right * velocity;
 	}
 
-	std::cout << "x: " << pos.x << "y: " << pos.y << "z: " << pos.z << std::endl;
+	// Code so the city loops seemlessly
+	if(pos.x > 2000)
+	{
+		pos.x -= 2000;
+	} else if(pos.x < -2000)
+	{
+		pos.x += 2000;
+	}
+
+	if(pos.z > 2000)
+	{
+		pos.z -= 2000;
+	} else if(pos.z < -2000)
+	{
+		pos.z += 2000;
+	}
 }
 
 void Camera::process_mouse(const float xOffset, const float yOffset)
@@ -62,8 +77,6 @@ void Camera::process_mouse(const float xOffset, const float yOffset)
 	{
 		pitch = -89.0f;
 	}
-
-	// std::cout << "yaw: " << yaw << "pitch: " << pitch << std::endl;
 	update_vectors();
 }
 
@@ -76,8 +89,6 @@ void Camera::update_vectors()
 
 	right = normalize(cross(front, worldUp));
 	up = normalize(cross(right, front));
-
-	// std::cout << front.x << " " << front.y << " " << front.z << std::endl;
 }
 
 mat4 Camera::get_view()

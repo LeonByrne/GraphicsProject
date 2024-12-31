@@ -221,7 +221,9 @@ void Building::render(const mat4 &vp, const vec3 &lightPos, const vec3 &lightStr
 	mat4 transform(1.0f);
 
 	transform = translate(transform, pos);
-	// transform = rotate(transform, ) // TODO add rotations in
+	transform = rotate(transform, rotation.x, vec3(1, 0, 0));
+	transform = rotate(transform, rotation.y, vec3(0, 1, 0));
+	transform = rotate(transform, rotation.z, vec3(0, 0, 1));
 	transform = glm::scale(transform, scale);
 
 	mat4 mvp = vp * transform;
@@ -242,7 +244,7 @@ void Building::set_pos(const vec3 &pos)
 
 void Building::set_rotation(const vec3 &rotation)
 {
-	this->rotation = rotation;
+	this->rotation = vec3(radians(rotation.x), radians(rotation.y), radians(rotation.z));
 }
 
 void Building::set_scale(const vec3 &scale)

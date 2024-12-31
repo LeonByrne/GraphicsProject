@@ -12,6 +12,7 @@ using namespace glm;
 #include "model.hpp"
 #include "Camera.hpp"
 #include "Building.hpp"
+#include "Block.hpp"
 
 void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void process_key(GLFWwindow *window, float time);
@@ -25,8 +26,8 @@ static glm::vec3 eye_center(0.0f, 100.0f, 800.0f);
 static glm::vec3 lookat(0.0f, 0.0f, 0.0f);
 static glm::vec3 up(0.0f, 1.0f, 0.0f);
 static float FoV = 45.0f;
-static float zNear = 100.0f;
-static float zFar = 1500.0f; 
+static float zNear = 10.0f;
+static float zFar = 15000.0f; 
 
 // Lighting  
 static glm::vec3 lightIntensity(5e6f, 5e6f, 5e6f);
@@ -69,7 +70,7 @@ int main()
 
 	// Set callbacks
 	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Off for debugging
 
 	if(glewInit() != GLEW_OK)
 	{
@@ -107,10 +108,21 @@ int main()
 	// Model building("../models/Buildings/Models/GLTF format/large_builingA.glb");
 	// Model building("/home/leon/localProgramming/GraphicsProject/models/Buildings/Models/GLTF format/large_buildingB.glb");
 	Building building("../models/untitled2.glb");
+	Building building2("../models/Buildings/large_buildingB.glb");
+	building2.set_scale(vec3(100));
+	building2.set_pos(vec3(140, 0, 0));
 	// Model building("/home/leon/localProgramming/GraphicsProject/models/residential_complex_modern_apartment_building.glb");
 	// Model building("../models/low_poly_city_pack.glb");
 	// Model building("../models/high_rise_building.glb");
 	building.set_scale(vec3(100));
+
+	Block block;
+	block.set_scale(vec3(200));
+	block.set_pos(vec3(0));
+
+	Block block2;
+	block2.set_scale(vec3(200));
+	block2.set_pos(vec3(2000, 0, 0));
 
 	// Model road("../models/Roads/GLTF format/road_square.glb");
 	// road.set_scale(vec3(100));
@@ -167,10 +179,14 @@ int main()
 
 		// binary.render(vp, lightPosition, lightIntensity);
 
-		building.render(vp, lightPosition, lightIntensity);
+		// building.render(vp, lightPosition, lightIntensity);
+		// building2.render(vp, lightPosition, lightIntensity);
 		// road.render(vp, lightPosition, lightIntensity);
 
 		// camera.render(vp, lightPosition, lightIntensity);
+
+		block.render(vp, lightPosition, lightIntensity);
+		block2.render(vp, lightPosition, lightIntensity);
 
 		frames++;
 		fTime += deltaTime;

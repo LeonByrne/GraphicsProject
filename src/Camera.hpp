@@ -18,7 +18,7 @@ private:
 	float yaw;
 	float pitch;
 
-	float movementSpeed = 25.0f;
+	float movementSpeed = 500.0f;
 	float mouseSensitivity = 0.1f;
 
 public:

@@ -53,7 +53,7 @@ void Camera::process_key(int key, float time)
 void Camera::process_mouse(const float xOffset, const float yOffset)
 {
 	yaw += xOffset * mouseSensitivity;
-	pitch += yOffset * mouseSensitivity;
+	pitch -= yOffset * mouseSensitivity;
 
 	if(pitch > 89.0f)
 	{

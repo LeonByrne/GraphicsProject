@@ -11,12 +11,15 @@ using namespace glm;
 #include "files.hpp"
 #include "model.hpp"
 #include "Camera.hpp"
+#include "Building.hpp"
 
 void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void process_key(GLFWwindow *window, float time);
 
 // Camera
-Camera camera(vec3(0, 100.0f, 800.0f));
+// Camera camera(vec3(0, 100.0f, 800.0f));
+// Camera camera(vec3(0.0f, 0.0f, 0.0f));
+Camera camera(vec3(100.0f, 50.0f, 100.0f));
 
 static glm::vec3 eye_center(0.0f, 100.0f, 800.0f);
 static glm::vec3 lookat(0.0f, 0.0f, 0.0f);
@@ -97,9 +100,20 @@ int main()
 
 	// model bot("../models/AnimatedTriangle.gltf");
 
-	Model binary("../models/man/CesiumMan.glb");
-	binary.set_pos(vec3(0, 0, 100));
-	binary.set_scale(vec3(100));	
+	// Model binary("../models/man/CesiumMan.glb");
+	// binary.set_pos(vec3(0, 0, 100));
+	// binary.set_scale(vec3(100));	
+
+	// Model building("../models/Buildings/Models/GLTF format/large_builingA.glb");
+	// Model building("/home/leon/localProgramming/GraphicsProject/models/Buildings/Models/GLTF format/large_buildingB.glb");
+	Building building("../models/untitled2.glb");
+	// Model building("/home/leon/localProgramming/GraphicsProject/models/residential_complex_modern_apartment_building.glb");
+	// Model building("../models/low_poly_city_pack.glb");
+	// Model building("../models/high_rise_building.glb");
+	building.set_scale(vec3(100));
+
+	// Model road("../models/Roads/GLTF format/road_square.glb");
+	// road.set_scale(vec3(100));
 	
 	// Model camera("../models/AntiqueCamera.glb");
 	// camera.set_pos(vec3(0, 0, 100));
@@ -135,7 +149,7 @@ int main()
 		{
 			time += deltaTime * playbackSpeed;
 
-			binary.update(time);
+			// binary.update(time);
 
 			// bot.update(time);
 			// bot2.update(time);
@@ -151,7 +165,11 @@ int main()
 		// bot2.render(vp, lightPosition, lightIntensity);
 		// bot3.render(vp, lightPosition, lightIntensity);
 
-		binary.render(vp, lightPosition, lightIntensity);
+		// binary.render(vp, lightPosition, lightIntensity);
+
+		building.render(vp, lightPosition, lightIntensity);
+		// road.render(vp, lightPosition, lightIntensity);
+
 		// camera.render(vp, lightPosition, lightIntensity);
 
 		frames++;

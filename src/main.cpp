@@ -13,6 +13,7 @@ using namespace glm;
 #include "Camera.hpp"
 #include "Building.hpp"
 #include "Block.hpp"
+#include "Plane.hpp"
 
 void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void process_key(GLFWwindow *window, float time);
@@ -27,7 +28,7 @@ static glm::vec3 lookat(0.0f, 0.0f, 0.0f);
 static glm::vec3 up(0.0f, 1.0f, 0.0f);
 static float FoV = 45.0f;
 static float zNear = 10.0f;
-static float zFar = 15000.0f; 
+static float zFar = 150000.0f; 
 
 // Lighting  
 static glm::vec3 lightIntensity(5e6f, 5e6f, 5e6f);
@@ -107,14 +108,6 @@ int main()
 
 	// Model building("../models/Buildings/Models/GLTF format/large_builingA.glb");
 	// Model building("/home/leon/localProgramming/GraphicsProject/models/Buildings/Models/GLTF format/large_buildingB.glb");
-	Building building("../models/untitled2.glb");
-	Building building2("../models/Buildings/large_buildingB.glb");
-	building2.set_scale(vec3(100));
-	building2.set_pos(vec3(140, 0, 0));
-	// Model building("/home/leon/localProgramming/GraphicsProject/models/residential_complex_modern_apartment_building.glb");
-	// Model building("../models/low_poly_city_pack.glb");
-	// Model building("../models/high_rise_building.glb");
-	building.set_scale(vec3(100));
 
 	Block block;
 	block.set_scale(vec3(200));
@@ -123,6 +116,8 @@ int main()
 	Block block2;
 	block2.set_scale(vec3(200));
 	block2.set_pos(vec3(2000, 0, 0));
+
+	Plane plane(vec3(0, 1000, 10), vec3(1000, 1000, 10), vec3(1000, -1000, 10), "../textures/DaylightBox.png");
 
 	// Model road("../models/Roads/GLTF format/road_square.glb");
 	// road.set_scale(vec3(100));
@@ -187,6 +182,9 @@ int main()
 
 		block.render(vp, lightPosition, lightIntensity);
 		block2.render(vp, lightPosition, lightIntensity);
+
+
+		plane.render(vp);
 
 		frames++;
 		fTime += deltaTime;

@@ -23,7 +23,7 @@ Plane::Plane(const vec3 &p1, const vec3 &p2, const vec3 &p3, const vec2 uv1, con
   //   uv1.x, uv2.y
   // };
 
-  programID = create_program("plane_vert.glsl", "plane_frag.glsl");
+  programID = create_program("../shaders/plane_vert.glsl", "../shaders/plane_frag.glsl");
   mvpID = glGetUniformLocation(programID, "mvp");
   textureID = create_texture(texture_path);
 

@@ -14,6 +14,7 @@ using namespace glm;
 #include "Building.hpp"
 #include "Block.hpp"
 #include "Plane.hpp"
+#include "Skybox.hpp"
 
 void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void process_key(GLFWwindow *window, float time);
@@ -119,6 +120,8 @@ int main()
 
 	Plane plane(vec3(0, 1000, 10), vec3(1000, 1000, 10), vec3(1000, -1000, 10), "../textures/DaylightBox.png");
 
+	Skybox sky(vec3(-1000), vec3(1000), "../textures/DaylightBox.png");
+
 	// Model road("../models/Roads/GLTF format/road_square.glb");
 	// road.set_scale(vec3(100));
 	
@@ -184,7 +187,9 @@ int main()
 		block2.render(vp, lightPosition, lightIntensity);
 
 
-		plane.render(vp);
+		// plane.render(vp);
+
+		sky.render(vp);
 
 		frames++;
 		fTime += deltaTime;

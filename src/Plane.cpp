@@ -44,6 +44,11 @@ Plane::Plane(const vec3 &p1, const vec3 &p2, const vec3 &p3, const vec2 uv1, con
   glBindVertexArray(0);
 }
 
+Plane::Plane()
+{
+  
+}
+
 void Plane::render(const mat4 &mvp)
 {
   glUseProgram(programID);
@@ -60,8 +65,8 @@ void Plane::render(const mat4 &mvp)
 
 Plane::~Plane()
 {
-  glDeleteVertexArrays(1, &vao);
-  glDeleteBuffers(1, &vbo);
-  glDeleteTextures(1, &textureID);
-  glDeleteProgram(programID);
+  // glDeleteVertexArrays(1, &vao);
+  // glDeleteBuffers(1, &vbo);
+  // glDeleteTextures(1, &textureID);
+  // glDeleteProgram(programID);
 }

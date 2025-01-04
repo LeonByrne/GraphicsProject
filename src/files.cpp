@@ -5,6 +5,9 @@
 #include <sstream>
 #include <fstream>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../libs/stb_image.h"
+
 /**
  * @brief Attempts to crete a program using shader files.
  * 
@@ -106,6 +109,42 @@ GLuint create_program(const char *vertex_path, const char *fragment_path)
 	// glDeleteShader(fragmentShaderID);
 
 	return programID;
+}
+
+GLuint create_texture(const char *image_path)
+{
+	int width, height, nChannels;
+
+	unsigned char *data = stbi_load(image_path, &width, &height, &nChannels, 0);
+	if(!data)
+	{
+		std::cerr << "Failed to load: " << image_path << std::endl;
+		return 0;
+	}
+
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	if(nChannels == 3)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	} else if(nChannels == 4)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	} else
+	{
+		std::cerr << "Unsupported image format: " << image_path << std::endl;
+	}
+
+	stbi_image_free(data);
+
+	return textureID;
 }
 
 bool is_gltf(const char *path)

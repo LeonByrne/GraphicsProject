@@ -1,5 +1,6 @@
 #include "Skybox.hpp"
   
+// TODO not quite lining up to the texture right
 Skybox::Skybox(const vec3 &p1, const vec3 &p2, const char *texture_path)
 {
   // planes[0] = Plane(p1, vec3(p2.x, p1.y, p1.z), vec3(p2.x, p2.y, p1.z), texture_path);

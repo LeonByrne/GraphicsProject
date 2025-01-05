@@ -60,20 +60,20 @@ void Camera::process_key(int key, float time)
 	}
 
 	// Code so the city loops seemlessly
-	if(pos.x > 2000)
+	if(pos.x > 10)
 	{
-		pos.x -= 2000;
-	} else if(pos.x < -2000)
+		pos.x -= 10;
+	} else if(pos.x < -10)
 	{
-		pos.x += 2000;
+		pos.x += 10;
 	}
 
-	if(pos.z > 2000)
+	if(pos.z > 10)
 	{
-		pos.z -= 2000;
-	} else if(pos.z < -2000)
+		pos.z -= 10;
+	} else if(pos.z < -10)
 	{
-		pos.z += 2000;
+		pos.z += 10;
 	}
 }
 

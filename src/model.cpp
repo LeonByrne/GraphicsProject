@@ -507,19 +507,20 @@ void Model::update(const float time)
 	update_skinning(globalTransforms);
 }
 
-void Model::render(const mat4 &vp, const vec3 &lightPos, const vec3 &lightStrength)
+void Model::render(const mat4 &vp, const std::vector<vec3> &offsets, const vec3 &lightPos, const vec3 &lightStrength)
 {
 	glUseProgram(programID);
 
 	mat4 transform(1.0f);
 
 	transform = translate(transform, pos);
-	// transform = rotate(transform, ) // TODO add rotations in
+	transform = rotate(transform, rotation.x, vec3(1, 0, 0));
+	transform = rotate(transform, rotation.y, vec3(0, 1, 0));
+	transform = rotate(transform, rotation.z, vec3(0, 0, 1));
 	transform = glm::scale(transform, scale);
 
 	mat4 mvp = vp * transform;
 	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
-	// glUniformMatrix4fv(mvpID, 1, GL_FALSE, &vp[0][0]);
 
 	// TODO move to elsewhere? Maybe where should this go for more complex models?
 	// Send joint matices

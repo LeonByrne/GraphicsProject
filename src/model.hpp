@@ -51,7 +51,7 @@ public:
 	~Model();
 
 	void update(const float time);
-	void render(const mat4 &vp, const vec3 &lightPos, const vec3 &lightStrength);
+	void render(const mat4 &vp, const std::vector<vec3> &offsets, const vec3 &lightPos, const vec3 &lightStrength);
 
 	void set_pos(const vec3 &pos);
 	void set_rotation(const vec3 &rotation);

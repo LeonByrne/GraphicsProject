@@ -8,6 +8,4 @@ uniform sampler2D textureSampler;
 void main()
 {
   colour = texture(textureSampler, tex).rgb;
-
-  // colour = vec4(1, 0, 0, 1);
 }

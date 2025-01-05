@@ -65,23 +65,15 @@ void computeGlobalNodeTransform(const tinygltf::Model& model,
 
 int findKeyframeIndex(const std::vector<float>& times, float animationTime) 
 {
-	int left = 0;
-	int right = times.size() - 1;
-
-	while (left <= right) {
-		int mid = (left + right) / 2;
-
-		if (mid + 1 < times.size() && times[mid] <= animationTime && animationTime < times[mid + 1]) {
-			return mid;
-		}	else if (times[mid] > animationTime) {
-			right = mid - 1;
-		} else { // animationTime >= times[mid + 1]
-			left = mid + 1;
+	for(int i = 0; i < times.size() - 1; i++)
+	{
+		if(animationTime >= times[i] && animationTime < times[i + 1])
+		{
+			return i;
 		}
 	}
 
-	// Target not found
-	return times.size() - 2;
+	return times.size() - 1;
 }
 
 GLuint loadTexture(const tinygltf::Image &image)
@@ -116,34 +108,34 @@ GLuint loadTexture(const tinygltf::Image &image)
 
 // Functions of the class
 
-void Model::bind_model()
+void Model::bind_model(std::vector<vec3> &offsets)
 {
 	const tinygltf::Scene &scene = model.scenes[model.defaultScene];
 
 	for(const int node : scene.nodes)
 	{
 		assert(node >= 0 && node < model.nodes.size());
-		bind_nodes(model.nodes[node]);
+		bind_nodes(model.nodes[node], offsets);
 	}
 }
 
-void Model::bind_nodes(const tinygltf::Node &node)
+void Model::bind_nodes(const tinygltf::Node &node, std::vector<vec3> &offsets)
 {
 	// bind this nodes mesh
 	if(node.mesh >= 0 && node.mesh < model.meshes.size())
 	{
-		bind_mesh(model.meshes[node.mesh]);
+		bind_mesh(model.meshes[node.mesh], offsets);
 	}
 
 	// Bind children and their meshes
 	for(const int child : node.children)
 	{
 		assert(child >= 0 && child < model.nodes.size());
-		bind_nodes(model.nodes[child]);
+		bind_nodes(model.nodes[child], offsets);
 	}
 }
 
-void Model::bind_mesh(const tinygltf::Mesh &mesh)
+void Model::bind_mesh(const tinygltf::Mesh &mesh, std::vector<vec3> &offsets)
 {
 	std::map<int, GLuint> vbos;
 	for(int i = 0; i < model.bufferViews.size(); i++)
@@ -215,6 +207,26 @@ void Model::bind_mesh(const tinygltf::Mesh &mesh)
 				std::cout << "vaa missing, not sure what to do here :|" << std::endl;
 			}
 		}
+
+		// Buffer instancing data
+		GLuint instanceVBO;
+		glGenBuffers(1, &instanceVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * offsets.size(), &offsets[0], GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glEnableVertexAttribArray(5);
+		glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+		glVertexAttribPointer(
+			5, 
+			3, 
+			GL_FLOAT,
+			GL_FALSE,
+			3 * sizeof(float),
+			(void *) 0
+		);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glVertexAttribDivisor(5, 1);
 
 		// Record vao
 		Primitive prim;
@@ -380,11 +392,12 @@ void Model::draw_mesh(const tinygltf::Mesh &mesh)
 		const auto &material = model.materials[mesh.primitives[i].material];
 		bind_material_textures(material);
 
-		glDrawElements(
+		glDrawElementsInstanced(
 			primitive.mode,
 			indexAccessor.count,
 			indexAccessor.componentType,
-			BUFFER_OFFSET(indexAccessor.byteOffset)
+			BUFFER_OFFSET(indexAccessor.byteOffset),
+			nInstances
 		);
 
 		glBindVertexArray(0);
@@ -445,6 +458,11 @@ void Model::update_animation(const tinygltf::Animation &anim, const Animation &a
 
 		// Get keyFrame
 		int keyframeIndex = findKeyframeIndex(times, animationTime);
+		int nextKeyframeIndex = keyframeIndex + 1 < times.size() ? keyframeIndex + 1 : 0;
+
+		float time0 = times[keyframeIndex];
+		float time1 = times[nextKeyframeIndex];
+		float t = (animationTime - time0) / (time1 - time0);
 
 		const float *outputPtr = (float *) (&outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset]);
 
@@ -452,26 +470,32 @@ void Model::update_animation(const tinygltf::Animation &anim, const Animation &a
 		if (channel.target_path == "translation") {
 			glm::vec3 translation0, translation1;
 			memcpy(&translation0, outputPtr + keyframeIndex * 3 * sizeof(float), 3 * sizeof(float));
+			memcpy(&translation1, outputPtr + nextKeyframeIndex * 3 * sizeof(float), 3 * sizeof(float));
 
+			// glm::vec3 translation = mix(translation0, translation1, t);
 			glm::vec3 translation = translation0;
 			nodeTransforms[targetNode] = translate(nodeTransforms[targetNode], translation);
 		} else if (channel.target_path == "rotation") {
 			glm::quat rotation0, rotation1;
 			memcpy(&rotation0, outputPtr + keyframeIndex * 4 * sizeof(float), 4 * sizeof(float));
+			memcpy(&rotation1, outputPtr + nextKeyframeIndex * 4 * sizeof(float), 4 * sizeof(float));
 
+			// glm::quat rotation = slerp(rotation0, rotation1, t);
 			glm::quat rotation = rotation0;
 			nodeTransforms[targetNode] *= mat4_cast(rotation);
 		} else if (channel.target_path == "scale") {
 			glm::vec3 scale0, scale1;
 			memcpy(&scale0, outputPtr + keyframeIndex * 3 * sizeof(float), 3 * sizeof(float));
+			memcpy(&scale1, outputPtr + nextKeyframeIndex * 3 * sizeof(float), 3 * sizeof(float));
 
+			// glm::vec3 scale = mix(scale0, scale1, t);
 			glm::vec3 scale = scale0;
 			nodeTransforms[targetNode] = glm::scale(nodeTransforms[targetNode], scale);
 		}
 	}
 }
 
-Model::Model(const std::string &filepath)
+Model::Model(const std::string &filepath, std::vector<vec3> &offsets)
 {
 	pos = vec3(0.0f);
 	rotation = vec3(0.0f);
@@ -479,7 +503,7 @@ Model::Model(const std::string &filepath)
 
 	assert(load_model(filepath.c_str(), model));
 
-	bind_model();
+	bind_model(offsets);
 	bind_textures();
 	prepare_skinning();
 	prepare_animation();
@@ -490,6 +514,8 @@ Model::Model(const std::string &filepath)
 	jointsID = glGetUniformLocation(programID, "joints");
 	lightPosID = glGetUniformLocation(programID, "lightPos");
 	lightIntensityID = glGetUniformLocation(programID, "lightIntensity");
+
+	nInstances = offsets.size();
 }
 
 Model::~Model()
@@ -507,7 +533,7 @@ void Model::update(const float time)
 	update_skinning(globalTransforms);
 }
 
-void Model::render(const mat4 &vp, const std::vector<vec3> &offsets, const vec3 &lightPos, const vec3 &lightStrength)
+void Model::render(const mat4 &vp, const vec3 &lightPos, const vec3 &lightStrength)
 {
 	glUseProgram(programID);
 

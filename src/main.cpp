@@ -92,6 +92,16 @@ int main()
 		}
 	}
 
+	// Don't need as many bots as buildings
+	std::vector<vec3> offsets1;
+	for(int x = -100; x <= 100; x += 10)
+	{
+		for(int z = -100; z <= 100; z += 10)
+		{
+			offsets1.push_back(vec3(x, 0, z));
+		}
+	}
+
 	Block block(offsets);
 	block.set_scale(vec3(1));
 	block.set_pos(vec3(0));
@@ -99,6 +109,13 @@ int main()
 	Skybox sky(vec3(-1000), vec3(1000), "../textures/DaylightBox.png");
 
 	Plane ground(vec3(-2000, -0.01, -2000), vec3(-2000, -0.01, 2000), vec3(2000, -0.01, 2000), vec2(-2000, -2000), vec2(2000, 2000), "../textures/smooth-gray-stucco-wall.jpg");
+
+	Model person("../models/People/walking_man_2.glb", offsets);
+	person.set_scale(vec3(0.0001));
+
+	Model bot("../models/Bot/bot.gltf", offsets1);
+	bot.set_pos(vec3(1.5, -0.15, 2));
+	bot.set_scale(vec3(0.005f));
 
 	mat4 projection = perspective(
 		radians(FoV),
@@ -129,6 +146,9 @@ int main()
 		if(playAnimation)
 		{
 			time += deltaTime * playbackSpeed;
+
+			bot.update(time);
+			// person.update(time);
 		}
 
 		mat4 view = camera.get_view();
@@ -137,6 +157,9 @@ int main()
 		block.render(vp, lightPosition, lightIntensity);
 		ground.render(vp);
 		sky.render(vp);
+
+		// person.render(vp, lightPosition, lightIntensity);
+		bot.render(vp, lightPosition, lightIntensity);
 
 		frames++;
 		fTime += deltaTime;

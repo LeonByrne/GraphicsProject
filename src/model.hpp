@@ -32,9 +32,11 @@ private:
 	vec3 scale;
 	vec3 rotation;
 
-	void bind_model();
-	void bind_nodes(const tinygltf::Node &node);
-	void bind_mesh(const tinygltf::Mesh &mesh);
+	int nInstances;
+
+	void bind_model(std::vector<vec3> &offsets);
+	void bind_nodes(const tinygltf::Node &node, std::vector<vec3> &offsets);
+	void bind_mesh(const tinygltf::Mesh &mesh, std::vector<vec3> &offsets);
 	void bind_textures();
 	void prepare_skinning();
 	void prepare_animation();
@@ -47,11 +49,11 @@ private:
 	void update_animation(const tinygltf::Animation &anim, const Animation &animation, const float time, std::vector<mat4> &nodeTransforms);
 
 public:
-	Model(const std::string &filepath);
+	Model(const std::string &filepath, std::vector<vec3> &offsets);
 	~Model();
 
 	void update(const float time);
-	void render(const mat4 &vp, const std::vector<vec3> &offsets, const vec3 &lightPos, const vec3 &lightStrength);
+	void render(const mat4 &vp, const vec3 &lightPos, const vec3 &lightStrength);
 
 	void set_pos(const vec3 &pos);
 	void set_rotation(const vec3 &rotation);

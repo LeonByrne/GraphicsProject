@@ -22,9 +22,7 @@ void process_key(GLFWwindow *window, float time);
 // Camera
 Camera camera(vec3(0.0f));
 
-static glm::vec3 eye_center(0.0f, 100.0f, 800.0f);
-static glm::vec3 lookat(0.0f, 0.0f, 0.0f);
-static glm::vec3 up(0.0f, 1.0f, 0.0f);
+// Project matrix stuff
 static float FoV = 45.0f;
 static float zNear = 0.1f;
 static float zFar = 2000.0f; 
@@ -70,7 +68,7 @@ int main()
 
 	// Set callbacks
 	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Off for debugging
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Turn off for debugging
 
 	if(glewInit() != GLEW_OK)
 	{
@@ -85,31 +83,7 @@ int main()
 	// Register the debug callback
 	// glDebugMessageCallback(OpenGLDebugCallback, nullptr);
 
-	std::cout << "Hello world!" << std::endl;
-
-	// GLuint programID = create_program("../shaders/vertex.glsl", "../shaders/fragment.glsl");
-
-	// Model bot("../models/bot.gltf");
-	// Model bot2("../models/bot.gltf");
-
-	// bot2.set_pos(vec3(100, 0, 0));
-
-	// Model bot3("../models/CesiumMan.gltf");
-	// bot3.set_pos(vec3(0, 0, 100));
-	// bot3.set_scale(vec3(100));
-	// model bot("../models/Box.gltf");
-
-	// model bot("../models/AnimatedTriangle.gltf");
-
-	// Model binary("../models/man/CesiumMan.glb");
-	// binary.set_pos(vec3(0, 0, 100));
-	// binary.set_scale(vec3(100));	
-
-	// Model building("../models/Buildings/Models/GLTF format/large_builingA.glb");
-	// Model building("/home/leon/localProgramming/GraphicsProject/models/Buildings/Models/GLTF format/large_buildingB.glb");
-
 	std::vector<vec3> offsets;
-
 	for(int x = -500; x <= 500; x += 10)
 	{
 		for(int z = -500; z <= 500; z += 10)
@@ -122,18 +96,9 @@ int main()
 	block.set_scale(vec3(1));
 	block.set_pos(vec3(0));
 
-	std::cout << offsets.size() << std::endl;
-
-	Plane plane(vec3(0, 1000, 10), vec3(1000, 1000, 10), vec3(1000, -1000, 10), "../textures/DaylightBox.png");
-
 	Skybox sky(vec3(-1000), vec3(1000), "../textures/DaylightBox.png");
 
-	// Model road("../models/Roads/GLTF format/road_square.glb");
-	// road.set_scale(vec3(100));
-	
-	// Model camera("../models/AntiqueCamera.glb");
-	// camera.set_pos(vec3(0, 0, 100));
-	// camera.set_scale(vec3(100));
+	Plane ground(vec3(-2000, -0.01, -2000), vec3(-2000, -0.01, 2000), vec3(2000, -0.01, 2000), vec2(-2000, -2000), vec2(2000, 2000), "../textures/smooth-gray-stucco-wall.jpg");
 
 	mat4 projection = perspective(
 		radians(FoV),
@@ -164,37 +129,13 @@ int main()
 		if(playAnimation)
 		{
 			time += deltaTime * playbackSpeed;
-
-			// binary.update(time);
-
-			// bot.update(time);
-			// bot2.update(time);
-			// bot3.update(time);
 		}
 
-		// mat4 view = lookAt(eye_center, lookat, up);
 		mat4 view = camera.get_view();
 		mat4 vp = projection * view;
 
-		// bot.render(modelLoc);
-		// bot.render(vp, lightPosition, lightIntensity);
-		// bot2.render(vp, lightPosition, lightIntensity);
-		// bot3.render(vp, lightPosition, lightIntensity);
-
-		// binary.render(vp, lightPosition, lightIntensity);
-
-		// building.render(vp, lightPosition, lightIntensity);
-		// building2.render(vp, lightPosition, lightIntensity);
-		// road.render(vp, lightPosition, lightIntensity);
-
-		// camera.render(vp, lightPosition, lightIntensity);
-
 		block.render(vp, lightPosition, lightIntensity);
-		// block2.render(vp, lightPosition, lightIntensity);
-
-
-		// plane.render(vp);
-
+		ground.render(vp);
 		sky.render(vp);
 
 		frames++;
@@ -280,6 +221,3 @@ void process_key(GLFWwindow *window, float time)
 		camera.process_key(GLFW_KEY_LEFT_SHIFT, time);
 	}
 }
-
-// TODO add camera movements
-// TODO add textures

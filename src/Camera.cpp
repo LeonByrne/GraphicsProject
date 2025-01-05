@@ -51,12 +51,12 @@ void Camera::process_key(int key, float time)
 
 	if(key == GLFW_KEY_SPACE)
 	{
-		pos += up * velocity;
+		pos += worldUp * velocity;
 	}
 
 	if(key == GLFW_KEY_LEFT_SHIFT)
 	{
-		pos -= up * velocity;
+		pos -= worldUp * velocity;
 	}
 
 	// Code so the city loops seemlessly

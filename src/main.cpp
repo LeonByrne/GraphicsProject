@@ -20,16 +20,14 @@ void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void process_key(GLFWwindow *window, float time);
 
 // Camera
-// Camera camera(vec3(0, 100.0f, 800.0f));
-// Camera camera(vec3(0.0f, 0.0f, 0.0f));
-Camera camera(vec3(100.0f, 50.0f, 100.0f));
+Camera camera(vec3(0.0f));
 
 static glm::vec3 eye_center(0.0f, 100.0f, 800.0f);
 static glm::vec3 lookat(0.0f, 0.0f, 0.0f);
 static glm::vec3 up(0.0f, 1.0f, 0.0f);
 static float FoV = 45.0f;
-static float zNear = 10.0f;
-static float zFar = 150000.0f; 
+static float zNear = 0.1f;
+static float zFar = 2000.0f; 
 
 // Lighting  
 static glm::vec3 lightIntensity(5e6f, 5e6f, 5e6f);
@@ -110,13 +108,21 @@ int main()
 	// Model building("../models/Buildings/Models/GLTF format/large_builingA.glb");
 	// Model building("/home/leon/localProgramming/GraphicsProject/models/Buildings/Models/GLTF format/large_buildingB.glb");
 
-	Block block;
-	block.set_scale(vec3(200));
+	std::vector<vec3> offsets;
+
+	for(int x = -500; x <= 500; x += 10)
+	{
+		for(int z = -500; z <= 500; z += 10)
+		{
+			offsets.push_back(vec3(x, 0, z));
+		}
+	}
+
+	Block block(offsets);
+	block.set_scale(vec3(1));
 	block.set_pos(vec3(0));
 
-	Block block2;
-	block2.set_scale(vec3(200));
-	block2.set_pos(vec3(2000, 0, 0));
+	std::cout << offsets.size() << std::endl;
 
 	Plane plane(vec3(0, 1000, 10), vec3(1000, 1000, 10), vec3(1000, -1000, 10), "../textures/DaylightBox.png");
 
@@ -184,7 +190,7 @@ int main()
 		// camera.render(vp, lightPosition, lightIntensity);
 
 		block.render(vp, lightPosition, lightIntensity);
-		block2.render(vp, lightPosition, lightIntensity);
+		// block2.render(vp, lightPosition, lightIntensity);
 
 
 		// plane.render(vp);

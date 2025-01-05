@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#define BLOCK_SIZE 10
+
 Camera::Camera(const vec3 &pos)
 {
 	this->pos = pos;

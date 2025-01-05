@@ -17,13 +17,13 @@ private:
 	std::vector<Building> buildings;
 	std::vector<Building> roads;
 
-	void place_horizontal(const vec3 &start, const int length);
-	void place_vertical(const vec3 &start, const int length);
-	void place_intersection(const vec3 &pos);
-	void place_roundabout(const vec3 &pos);
+	void place_horizontal(const vec3 &start, const int length, std::vector<vec3> &offsets);
+	void place_vertical(const vec3 &start, const int length, std::vector<vec3> &offsets);
+	void place_intersection(const vec3 &pos, std::vector<vec3> &offsets);
+	void place_roundabout(const vec3 &pos, std::vector<vec3> &offsets);
 
 public:
-	Block(/* args */);
+	Block(std::vector<vec3> &offsets);
 	~Block();
 
 	void render(const mat4 &vp, const vec3 &lightPos, const vec3 &lightIntensity);

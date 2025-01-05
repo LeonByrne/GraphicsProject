@@ -14,34 +14,34 @@ using namespace glm;
 
 // Functions of the class
 
-void Building::bind_model()
+void Building::bind_model(std::vector<vec3> &offsets)
 {
 	const tinygltf::Scene &scene = model.scenes[model.defaultScene];
 
 	for(const int node : scene.nodes)
 	{
 		assert(node >= 0 && node < model.nodes.size());
-		bind_nodes(model.nodes[node]);
+		bind_nodes(model.nodes[node], offsets);
 	}
 }
 
-void Building::bind_nodes(const tinygltf::Node &node)
+void Building::bind_nodes(const tinygltf::Node &node, std::vector<vec3> &offsets)
 {
 	// bind this nodes mesh
 	if(node.mesh >= 0 && node.mesh < model.meshes.size())
 	{
-		bind_mesh(model.meshes[node.mesh]);
+		bind_mesh(model.meshes[node.mesh], offsets);
 	}
 
 	// Bind children and their meshes
 	for(const int child : node.children)
 	{
 		assert(child >= 0 && child < model.nodes.size());
-		bind_nodes(model.nodes[child]);
+		bind_nodes(model.nodes[child], offsets);
 	}
 }
 
-void Building::bind_mesh(const tinygltf::Mesh &mesh)
+void Building::bind_mesh(const tinygltf::Mesh &mesh, std::vector<vec3> &offsets)
 {
 	std::map<int, GLuint> vbos;
 	for(int i = 0; i < model.bufferViews.size(); i++)
@@ -114,6 +114,26 @@ void Building::bind_mesh(const tinygltf::Mesh &mesh)
 			}
 		}
 
+		// Buffer instancing data
+		GLuint instanceVBO;
+		glGenBuffers(1, &instanceVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * offsets.size(), &offsets[0], GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glEnableVertexAttribArray(5);
+		glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+		glVertexAttribPointer(
+			5, 
+			3, 
+			GL_FLOAT,
+			GL_FALSE,
+			3 * sizeof(float),
+			(void *) 0
+		);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glVertexAttribDivisor(5, 1);
+
 		// Record vao
 		Primitive prim;
 		prim.vao = vao;
@@ -165,11 +185,12 @@ void Building::draw_mesh(const tinygltf::Mesh &mesh)
 		const auto &material = model.materials[mesh.primitives[i].material];
 		bind_material_colour(material);
 
-		glDrawElements(
+		glDrawElementsInstanced(
 			primitive.mode,
 			indexAccessor.count,
 			indexAccessor.componentType,
-			BUFFER_OFFSET(indexAccessor.byteOffset)
+			BUFFER_OFFSET(indexAccessor.byteOffset),
+			nInstances
 		);
 
 		glBindVertexArray(0);
@@ -188,7 +209,7 @@ void Building::bind_material_colour(const tinygltf::Material &material)
 	glUniform4fv(baseColourID, 1, &baseColour[0]);
 }
 
-Building::Building(const std::string &filepath)
+Building::Building(const std::string &filepath, std::vector<vec3> &offsets)
 {
 	pos = vec3(0.0f);
 	rotation = vec3(0.0f);
@@ -196,7 +217,7 @@ Building::Building(const std::string &filepath)
 
 	assert(load_model(filepath.c_str(), model));
 
-	bind_model();
+	bind_model(offsets);
 
 	programID = create_program("../shaders/building_vert.glsl", "../shaders/building_frag.glsl");
 
@@ -204,6 +225,8 @@ Building::Building(const std::string &filepath)
 	lightPosID = glGetUniformLocation(programID, "lightPos");
 	lightIntensityID = glGetUniformLocation(programID, "lightIntensity");
 	baseColourID = glGetUniformLocation(programID, "baseColourFactor");
+
+	nInstances = offsets.size();
 }
 
 Building::~Building()

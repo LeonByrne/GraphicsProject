@@ -29,9 +29,11 @@ private:
 	vec3 scale;
 	vec3 rotation;
 
-	void bind_model();
-	void bind_nodes(const tinygltf::Node &node);
-	void bind_mesh(const tinygltf::Mesh &mesh);
+	int nInstances;
+
+	void bind_model(std::vector<vec3> &offsets);
+	void bind_nodes(const tinygltf::Node &node, std::vector<vec3> &offsets);
+	void bind_mesh(const tinygltf::Mesh &mesh, std::vector<vec3> &offsets);
 
 	void draw_model();
 	void draw_nodes(const tinygltf::Node &node);
@@ -39,7 +41,7 @@ private:
 	void bind_material_colour(const tinygltf::Material &material);
 
 public:
-	Building(const std::string &filepath);
+	Building(const std::string &filepath, std::vector<vec3> &offsets);
 	~Building();
 
 	void update(const float time);

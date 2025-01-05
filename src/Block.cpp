@@ -2,9 +2,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-void Block::place_horizontal(const vec3 &start, const int length)
+void Block::place_horizontal(const vec3 &start, const int length, std::vector<vec3> &offsets)
 {
-	Building road("../models/Roads/road_straight.glb");
+	Building road("../models/Roads/road_straight.glb", offsets);
 
 	for(int i = 0; i < length; i++)
 	{
@@ -13,9 +13,9 @@ void Block::place_horizontal(const vec3 &start, const int length)
 	}
 }
 
-void Block::place_vertical(const vec3 &start, const int length)
+void Block::place_vertical(const vec3 &start, const int length, std::vector<vec3> &offsets)
 {
-	Building road("../models/Roads/road_straight.glb");
+	Building road("../models/Roads/road_straight.glb", offsets);
 	road.set_rotation(vec3(0, 90, 0));
 
 	for(int i = 0; i < length; i++)
@@ -25,23 +25,23 @@ void Block::place_vertical(const vec3 &start, const int length)
 	}
 }
 
-void Block::place_intersection(const vec3 &pos)
+void Block::place_intersection(const vec3 &pos, std::vector<vec3> &offsets)
 {
-	Building road("../models/Roads/road_crossroad.glb");
+	Building road("../models/Roads/road_crossroad.glb", offsets);
 	road.set_pos(pos);
 
 	roads.push_back(road);
 }
 
-void Block::place_roundabout(const vec3 &pos)
+void Block::place_roundabout(const vec3 &pos, std::vector<vec3> &offsets)
 {
-	Building road("../models/Roads/road_roundabout.glb");
+	Building road("../models/Roads/road_roundabout.glb", offsets);
 	road.set_pos(pos);
 
 	roads.push_back(road);
 }
 
-Block::Block(/* args */)
+Block::Block(std::vector<vec3> &offsets)
 {
 	// Building b1("../models/Buildings/large_buildingA.glb");
 	// b1.set_pos(vec3(100, 0, 100));
@@ -60,58 +60,58 @@ Block::Block(/* args */)
 	// roads.push_back(r2);
 	// roads.push_back(r2);
 
-	Building b1("../models/Buildings/skyscraperC.glb");
+	Building b1("../models/Buildings/skyscraperC.glb", offsets);
 	b1.set_pos(vec3(8, 0, 8));
 	b1.set_rotation(vec3(0, 180, 0));
 	buildings.push_back(b1);
 
-	Building b2("../models/Buildings/large_buildingA.glb");
+	Building b2("../models/Buildings/large_buildingA.glb", offsets);
 	b2.set_pos(vec3(3.5, 0, 1.75));
 	b2.set_rotation(vec3(0, 90, 0));
 	buildings.push_back(b2);
 
-	Building b3("../models/Buildings/large_buildingC.glb");
+	Building b3("../models/Buildings/large_buildingC.glb", offsets);
 	b3.set_pos(vec3(1, 0, 4));
 	buildings.push_back(b3);
 
-	Building b4("../models/Buildings/large_buildingC.glb");
+	Building b4("../models/Buildings/large_buildingC.glb", offsets);
 	b4.set_pos(vec3(1.75, 0, 4));
 	buildings.push_back(b4);
 
-	Building b5("../models/Buildings/large_buildingC.glb");
+	Building b5("../models/Buildings/large_buildingC.glb", offsets);
 	b5.set_pos(vec3(2.5, 0, 4));
 	buildings.push_back(b5);
 
-	Building b6("../models/Buildings/large_buildingC.glb");
+	Building b6("../models/Buildings/large_buildingC.glb", offsets);
 	b6.set_pos(vec3(3.25, 0, 4));
 	buildings.push_back(b6);
 
-	Building b7("../models/Buildings/large_buildingF.glb");
+	Building b7("../models/Buildings/large_buildingF.glb", offsets);
 	b7.set_pos(vec3(1.5, 0, 1));
 	b7.set_rotation(vec3(0, 180, 0));
 	buildings.push_back(b7);
 
-	Building b8("../models/Buildings/large_buildingG.glb");
+	Building b8("../models/Buildings/large_buildingG.glb", offsets);
 	b8.set_pos(vec3(3, 0, 7));
 	b8.set_rotation(vec3(0, 90, 0));
 	buildings.push_back(b8);
 
 
-	place_horizontal(vec3(1, 0, 0), 4);
-	place_horizontal(vec3(6, 0, 0), 3);
-	place_horizontal(vec3(1, 0, 5), 3);
-	place_horizontal(vec3(7, 0, 5), 3);
+	place_horizontal(vec3(1, 0, 0), 4, offsets);
+	place_horizontal(vec3(6, 0, 0), 4, offsets);
+	place_horizontal(vec3(1, 0, 5), 3, offsets);
+	place_horizontal(vec3(7, 0, 5), 3, offsets);
 
-	place_vertical(vec3(0, 0, 1), 4);
-	place_vertical(vec3(0, 0, 6), 4);
-	place_vertical(vec3(5, 0, 1), 3);
-	place_vertical(vec3(5, 0, 7), 3);
+	place_vertical(vec3(0, 0, 1), 4, offsets);
+	place_vertical(vec3(0, 0, 6), 4, offsets);
+	place_vertical(vec3(5, 0, 1), 3, offsets);
+	place_vertical(vec3(5, 0, 7), 3, offsets);
 
-	place_intersection(vec3(0, 0, 0));
-	place_intersection(vec3(5, 0, 0));
-	place_intersection(vec3(0, 0, 5));
+	place_intersection(vec3(0, 0, 0), offsets);
+	place_intersection(vec3(5, 0, 0), offsets);
+	place_intersection(vec3(0, 0, 5), offsets);
 
-	place_roundabout(vec3(5, 0, 5));
+	place_roundabout(vec3(5, 0, 5), offsets);
 }
 
 Block::~Block()

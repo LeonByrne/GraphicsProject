@@ -29,24 +29,34 @@ void Camera::process_key(int key, float time)
 {
 	float velocity = movementSpeed * time;
 
-	if(key == GLFW_KEY_W)
+	if(key == GLFW_KEY_W || key == GLFW_KEY_UP)
 	{
 		pos += front * velocity;
 	}
 
-	if(key == GLFW_KEY_S)
+	if(key == GLFW_KEY_S || key == GLFW_KEY_DOWN)
 	{
 		pos -= front * velocity;
 	}
 
-	if(key == GLFW_KEY_A)
+	if(key == GLFW_KEY_A || key == GLFW_KEY_LEFT)
 	{
 		pos -= right * velocity;
 	}
 
-	if(key == GLFW_KEY_D)
+	if(key == GLFW_KEY_D || key == GLFW_KEY_RIGHT)
 	{
 		pos += right * velocity;
+	}
+
+	if(key == GLFW_KEY_SPACE)
+	{
+		pos += up * velocity;
+	}
+
+	if(key == GLFW_KEY_LEFT_SHIFT)
+	{
+		pos -= up * velocity;
 	}
 
 	// Code so the city loops seemlessly

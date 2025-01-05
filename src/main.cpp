@@ -232,24 +232,52 @@ void mouse_callback(GLFWwindow *window, double xPos, double yPos)
 
 void process_key(GLFWwindow *window, float time)
 {
+	// Forward
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		camera.process_key(GLFW_KEY_W, time);
+	} else if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_UP, time);
 	}
 
+	// Left
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		camera.process_key(GLFW_KEY_A, time);
+	} else if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_LEFT, time);
 	}
 
+	// Backward
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		camera.process_key(GLFW_KEY_S, time);
+	} else if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_DOWN, time);
 	}
 
+	// Right
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		camera.process_key(GLFW_KEY_D, time);
+	} else if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_RIGHT, time);
+	}
+
+	// Up
+	if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_SPACE, time);
+	}
+
+	// Down
+	if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		camera.process_key(GLFW_KEY_LEFT_SHIFT, time);
 	}
 }
 

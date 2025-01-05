@@ -1,0 +1,20 @@
+bot
+Taken from lab4
+
+man 1
+https://sketchfab.com/3d-models/nathan-animated-003-walking-3d-man-143a2b1ea5eb4385ae90a73657aca3bc 
+
+man 2
+https://sketchfab.com/3d-models/man-carecter-modeling-animated-walking-073ddbcb491f47eab15ddbc3c54ac484
+
+Daylight box
+https://opengameart.org/content/sky-box-sunny-day
+
+grunge-wall-texture
+https://www.freepik.com/free-photo/grunge-wall-texture_1034782.htm#fromView=keyword&page=1&position=24&uuid=30f92e90-2a53-4f5f-a223-318351d33c1a&new_detail=true
+
+smoooth-gray-stucco-wall
+https://www.freepik.com/free-photo/smooth-gray-stucco-wall_1037512.htm#fromView=keyword&page=1&position=0&uuid=2f82340b-90db-47d6-b64b-2514f6e58c55&new_detail=true
+
+Buildings and roads
+kenny.nl

@@ -548,9 +548,6 @@ void Model::render(const mat4 &vp, const vec3 &lightPos, const vec3 &lightStreng
 	mat4 mvp = vp * transform;
 	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
 
-	// TODO move to elsewhere? Maybe where should this go for more complex models?
-	// Send joint matices
-	// std::cout << skins[0].jointMatrices.size() << std::endl;
 	if(!skins.empty())
 	{
 		glUniformMatrix4fv(jointsID, skins[0].jointMatrices.size(), GL_FALSE, &skins[0].jointMatrices[0][0][0]);

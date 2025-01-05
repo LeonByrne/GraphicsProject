@@ -26,7 +26,6 @@ private:
 	std::vector<Animation> animations;
 	std::vector<GLuint> textures;
 
-	// TODO use these for instancing
 	// The model can be moved about
 	vec3 pos;
 	vec3 scale;

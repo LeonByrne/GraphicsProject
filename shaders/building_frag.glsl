@@ -22,7 +22,7 @@ void main()
 	v = v / (1.0 + v);
 
 	// Gamma correction
-	finalColor = pow(v, vec3(1.0 / 2.2));
+	v = pow(v, vec3(1.0 / 2.2));
 
 	finalColor = baseColourFactor.rgb;
 }

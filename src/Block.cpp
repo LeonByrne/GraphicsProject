@@ -43,30 +43,13 @@ void Block::place_roundabout(const vec3 &pos, std::vector<vec3> &offsets)
 
 Block::Block(std::vector<vec3> &offsets)
 {
-	// Building b1("../models/Buildings/large_buildingA.glb");
-	// b1.set_pos(vec3(100, 0, 100));
-	// b1.set_scale(vec3(10));
-
-	// Building r1("../models/Roads/road_straight.glb");
-	// r1.set_pos(vec3(2, 0, 0));
-
-	// Building r2("../models/Roads/road_straight.glb");
-	// r2.set_pos(vec3(3, 0, 0));
-
-	// buildings.push_back(b1);
-
-	// roads.push_back(r1);
-	// roads.push_back(r2);
-	// roads.push_back(r2);
-	// roads.push_back(r2);
-
 	Building b1("../models/Buildings/skyscraperC.glb", offsets);
-	b1.set_pos(vec3(8, 0, 8));
-	b1.set_rotation(vec3(0, 180, 0));
+	b1.set_pos(vec3(7, 0, 7));
+	b1.set_rotation(vec3(0, 0, 0));
 	buildings.push_back(b1);
 
 	Building b2("../models/Buildings/large_buildingA.glb", offsets);
-	b2.set_pos(vec3(3.5, 0, 1.75));
+	b2.set_pos(vec3(3.5, 0, 1.5));
 	b2.set_rotation(vec3(0, 90, 0));
 	buildings.push_back(b2);
 
@@ -95,6 +78,58 @@ Block::Block(std::vector<vec3> &offsets)
 	b8.set_pos(vec3(3, 0, 7));
 	b8.set_rotation(vec3(0, 90, 0));
 	buildings.push_back(b8);
+
+	Building b9("../models/Buildings/large_buildingE.glb", offsets);
+	b9.set_pos(vec3(1.35, 0, 8.75));
+	buildings.push_back(b9);
+
+	Building b10("../models/Buildings/large_buildingE.glb", offsets);
+	b10.set_pos(vec3(2.5, 0, 8.75));
+	buildings.push_back(b10);
+
+	Building b11("../models/Buildings/large_buildingE.glb", offsets);
+	b11.set_pos(vec3(3.65, 0, 8.75));
+	buildings.push_back(b11);
+
+	Building b12("../models/Buildings/large_buildingD.glb", offsets);
+	b12.set_pos(vec3(1.25, 0, 6.75));
+	b12.set_rotation(vec3(0, -90, 0));
+	buildings.push_back(b12);
+
+	Building b13("../models/Buildings/large_buildingD.glb", offsets);
+	b13.set_pos(vec3(6.25, 0, 3.25));
+	b13.set_rotation(vec3(0, -90, 0));
+	buildings.push_back(b13);
+
+	Building b14("../models/Buildings/large_buildingA.glb", offsets);
+	b14.set_pos(vec3(6.25, 0, 1.5));
+	b14.set_rotation(vec3(0, -90, 0));
+	buildings.push_back(b14);
+
+	Building b15("../models/Buildings/large_buildingB.glb", offsets);
+	b15.set_pos(vec3(9, 0, 1));
+	b15.set_rotation(vec3(0, 90, 0));
+	buildings.push_back(b15);
+
+	Building b16("../models/Buildings/large_buildingB.glb", offsets);
+	b16.set_pos(vec3(9, 0, 1.75));
+	b16.set_rotation(vec3(0, 90, 0));
+	buildings.push_back(b16);
+
+	Building b17("../models/Buildings/large_buildingB.glb", offsets);
+	b17.set_pos(vec3(9, 0, 2.5));
+	b17.set_rotation(vec3(0, 90, 0));
+	buildings.push_back(b17);
+
+	Building b18("../models/Buildings/large_buildingB.glb", offsets);
+	b18.set_pos(vec3(9, 0, 3.25));
+	b18.set_rotation(vec3(0, 90, 0));
+	buildings.push_back(b18);
+
+	Building b19("../models/Buildings/large_buildingB.glb", offsets);
+	b19.set_pos(vec3(9, 0, 4));
+	b19.set_rotation(vec3(0, 90, 0));
+	buildings.push_back(b19);
 
 
 	place_horizontal(vec3(1, 0, 0), 4, offsets);

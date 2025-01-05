@@ -17,12 +17,15 @@ using namespace glm;
 #include "Skybox.hpp"
 
 void mouse_callback(GLFWwindow *window, double xPos, double yPos);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_key(GLFWwindow *window, float time);
 
 // Camera
 Camera camera(vec3(0.0f));
 
 // Project matrix stuff
+int screenWidth = 800;
+int screenHeight = 600;
 static float FoV = 45.0f;
 static float zNear = 0.1f;
 static float zFar = 2000.0f; 
@@ -68,7 +71,8 @@ int main()
 
 	// Set callbacks
 	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Turn off for debugging
+	glfwSetWindowSizeCallback(window, framebuffer_size_callback);
+	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Turn off for debugging
 
 	if(glewInit() != GLEW_OK)
 	{
@@ -84,9 +88,9 @@ int main()
 	// glDebugMessageCallback(OpenGLDebugCallback, nullptr);
 
 	std::vector<vec3> offsets;
-	for(int x = -500; x <= 500; x += 10)
+	for(int x = -400; x <= 400; x += 10)
 	{
-		for(int z = -500; z <= 500; z += 10)
+		for(int z = -400; z <= 400; z += 10)
 		{
 			offsets.push_back(vec3(x, 0, z));
 		}
@@ -117,9 +121,11 @@ int main()
 	bot.set_pos(vec3(1.5, -0.15, 2));
 	bot.set_scale(vec3(0.005f));
 
+	// Building building("../models/Buildings/skyscraperC.glb", offsets);
+
 	mat4 projection = perspective(
 		radians(FoV),
-		(float) 800 / 600,
+		(float) screenWidth / screenHeight,
 		zNear,
 		zFar
 	);
@@ -148,7 +154,6 @@ int main()
 			time += deltaTime * playbackSpeed;
 
 			bot.update(time);
-			// person.update(time);
 		}
 
 		mat4 view = camera.get_view();
@@ -158,7 +163,6 @@ int main()
 		ground.render(vp);
 		sky.render(vp);
 
-		// person.render(vp, lightPosition, lightIntensity);
 		bot.render(vp, lightPosition, lightIntensity);
 
 		frames++;
@@ -192,6 +196,14 @@ void mouse_callback(GLFWwindow *window, double xPos, double yPos)
 	lastY = yPos;
 
 	camera.process_mouse(xOffset, yOffset);
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+  // Adjust the viewport to the new window size
+  glViewport(0, 0, width, height);
+
+	screenWidth = width;
+	screenHeight = height;
 }
 
 void process_key(GLFWwindow *window, float time)

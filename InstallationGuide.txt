@@ -1,0 +1,5 @@
+This project was made on linux. It requires opengl, glfw and glm to be installed.
+
+To build, cd to the root directory of this project and run make.
+
+To run, either double click on bin/my_program or cd to bin before running.
